@@ -1,10 +1,9 @@
-<svg width="512" height="512" viewBox="0 0 512 512" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <rect width="512" height="512" rx="80" fill="#3b82f6"/>
-  <path d="M256 96C256 87.1634 263.163 80 272 80H368C376.837 80 384 87.1634 384 96V128C384 136.837 376.837 144 368 144H272C263.163 144 256 136.837 256 128V96Z" fill="white"/>
-  <path d="M256 192C256 183.163 263.163 176 272 176H368C376.837 176 384 183.163 384 192V224C384 232.837 376.837 240 368 240H272C263.163 240 256 232.837 256 224V192Z" fill="white"/>
-  <path d="M256 288C256 279.163 263.163 272 272 272H368C376.837 272 384 279.163 384 288V320C384 328.837 376.837 336 368 336H272C263.163 336 256 328.837 256 320V288Z" fill="white"/>
-  <circle cx="192" cy="112" r="16" fill="white"/>
-  <circle cx="192" cy="208" r="16" fill="white"/>
-  <circle cx="192" cy="304" r="16" fill="white"/>
-  <path d="M160 80C168.837 80 176 87.1634 176 96V416C176 424.837 168.837 432 160 432H144C135.163 432 128 424.837 128 416V96C128 87.1634 135.163 80 144 80H160Z" fill="white"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Progress circle -->
+  <circle cx="16" cy="16" r="12" stroke="#e5e7eb" stroke-width="2" fill="none"/>
+  <circle cx="16" cy="16" r="12" stroke="#3b82f6" stroke-width="2" 
+          fill="none" stroke-dasharray="60 20" stroke-linecap="round"/>
+  <!-- Checkmark in center -->
+  <path d="M12 16 L15 19 L20 13" stroke="#3b82f6" stroke-width="2.5" 
+        stroke-linecap="round" stroke-linejoin="round" fill="none"/>
 </svg>
