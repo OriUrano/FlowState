@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { Check, Clock, Plus, Trash2 } from 'lucide-svelte';
+	import { Check, Clock, Plus, Trash2, Edit } from 'lucide-svelte';
 	import { routines, type Routine } from '$lib/stores/routines';
 	import { onMount } from 'svelte';
 
@@ -39,6 +39,11 @@
 		routines.delete(id);
 	}
 
+	function editRoutine(routine: Routine) {
+		// TODO: Implement edit functionality
+		console.log('Edit routine:', routine);
+	}
+
 	function formatTime(time?: string) {
 		if (!time) return '';
 		const [hours, minutes] = time.split(':');
@@ -54,7 +59,8 @@
 		<h2 class="text-2xl font-bold text-gray-900">Today's Routines</h2>
 		<button
 			on:click={() => (showAddForm = true)}
-			class="rounded-full bg-blue-600 p-2 text-white shadow-lg transition-colors hover:bg-blue-700"
+			class="flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-700"
+			style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; max-width: 40px; max-height: 40px; flex-shrink: 0;"
 		>
 			<Plus size={20} />
 		</button>
@@ -123,16 +129,17 @@
 		</div>
 	{/if}
 
-	<div class="space-y-3">
+	<div class="space-y-2">
 		{#each $routines as routine (routine.id)}
-			<div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
+			<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
 				<div class="flex items-center justify-between">
 					<div class="flex flex-1 items-center gap-3">
 						<button
 							on:click={() => toggleComplete(routine)}
-							class="flex h-6 w-6 flex-shrink-0 items-center justify-center rounded-full border-2 transition-colors {routine.completed
+							class="flex items-center justify-center rounded-full border-2 transition-colors {routine.completed
 								? 'border-green-500 bg-green-500 text-white'
 								: 'border-gray-300 hover:border-green-500'}"
+							style="width: 28px; height: 28px; min-width: 28px; min-height: 28px; max-width: 28px; max-height: 28px; flex-shrink: 0;"
 						>
 							{#if routine.completed}
 								<Check size={14} />
@@ -159,12 +166,20 @@
 						</div>
 					</div>
 
-					<button
-						on:click={() => deleteRoutine(routine.id)}
-						class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
-					>
-						<Trash2 size={16} />
-					</button>
+					<div class="flex items-center gap-1">
+						<button
+							on:click={() => editRoutine(routine)}
+							class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-blue-500"
+						>
+							<Edit size={16} />
+						</button>
+						<button
+							on:click={() => deleteRoutine(routine.id)}
+							class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
+						>
+							<Trash2 size={16} />
+						</button>
+					</div>
 				</div>
 			</div>
 		{:else}
