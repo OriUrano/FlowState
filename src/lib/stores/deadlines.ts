@@ -18,23 +18,23 @@ function calculateStatus(deadline: Deadline): 'pending' | 'completed' | 'overdue
 	if (deadline.completedAt) {
 		return 'completed';
 	}
-	
+
 	const now = new Date();
 	const due = new Date(deadline.dueDate);
-	
+
 	// Set time to end of day for due date comparison
 	due.setHours(23, 59, 59, 999);
-	
+
 	if (now > due) {
 		return 'overdue';
 	}
-	
+
 	return 'pending';
 }
 
 // Helper function to update status for all deadlines
 function updateDeadlineStatuses(deadlines: Deadline[]): Deadline[] {
-	return deadlines.map(deadline => ({
+	return deadlines.map((deadline) => ({
 		...deadline,
 		status: calculateStatus(deadline)
 	}));

@@ -3,6 +3,7 @@
 ## High Priority - Core Features
 
 ### 🎯 Goals Module
+
 - [ ] Create Goals store (`src/lib/stores/goals.ts`)
 - [ ] Design Goals data structure (title, description, deadline, priority, progress)
 - [ ] Implement CRUD operations for Goals
@@ -11,6 +12,7 @@
 - [ ] Integrate Goals with bottom navigation
 
 ### 📅 Deadlines Module
+
 - [x] Create Deadlines store (`src/lib/stores/deadlines.ts`)
 - [x] Design Deadlines data structure (title, description, due date, priority, status)
 - [x] Implement CRUD operations for Deadlines
@@ -21,6 +23,7 @@
 - [ ] Add deadline notifications/reminders
 
 ### 👤 Profile/Settings Module
+
 - [ ] Create Profile store (`src/lib/stores/profile.ts`)
 - [ ] Design user preferences structure
 - [ ] Create Profile/Settings UI
@@ -31,6 +34,7 @@
 ## Medium Priority - Enhanced Features
 
 ### 🔔 Notifications & Reminders
+
 - [ ] Implement service worker for background notifications
 - [ ] Add notification permissions handling
 - [ ] Create notification scheduling system
@@ -38,6 +42,7 @@
 - [ ] Add deadline alerts
 
 ### 📊 Analytics & Insights
+
 - [ ] Create analytics store for tracking completion rates
 - [ ] Add routine completion statistics
 - [ ] Create progress visualization components
@@ -45,6 +50,7 @@
 - [ ] Track streak counters
 
 ### 🔄 Data Sync & Backup
+
 - [ ] Design backend API structure
 - [ ] Implement user authentication
 - [ ] Add data synchronization between devices
@@ -52,6 +58,7 @@
 - [ ] Add offline-first data handling
 
 ### 🎨 UI/UX Improvements
+
 - [ ] Add dark mode support
 - [ ] Create theme customization options
 - [ ] Add accessibility improvements (screen reader support)
@@ -61,18 +68,21 @@
 ## Low Priority - Nice to Have
 
 ### 🤝 Social Features
+
 - [ ] Add routine sharing functionality
 - [ ] Create community templates
 - [ ] Add accountability partner features
 - [ ] Implement routine recommendations
 
 ### 📱 Mobile Enhancements
+
 - [ ] Add iOS/Android app store deployment
 - [ ] Implement native mobile features (camera, contacts)
 - [ ] Add widget support for home screen
 - [ ] Create Apple Watch/Android Wear integration
 
 ### 📅 Advanced Deadline Features (Phase 2)
+
 - [ ] Push notifications for due deadlines
 - [ ] Recurring deadlines support (weekly, monthly, yearly)
 - [ ] Calendar view integration with month/week views
@@ -87,6 +97,7 @@
 - [ ] Integration with external calendar apps (Google Calendar, Outlook)
 
 ### 🔧 Technical Improvements
+
 - [ ] Add comprehensive unit tests
 - [ ] Implement E2E testing
 - [ ] Add performance monitoring
@@ -96,6 +107,7 @@
 ## Current Status
 
 ### ✅ Completed
+
 - [x] Project setup with SvelteKit and PWA configuration
 - [x] Mobile-first responsive design
 - [x] Routines module fully implemented
@@ -109,10 +121,12 @@
 - [x] Form validation and error handling
 
 ### 🚧 In Progress
+
 - Goals and Profile modules remain as placeholders
 - Advanced deadline features planned for Phase 2
 
 ### 🛠️ Technical Debt
+
 - [ ] Add TypeScript strict mode
 - [ ] Implement proper error handling
 - [ ] Add loading states for async operations

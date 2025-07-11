@@ -18,26 +18,31 @@ FlowState is a mobile-first Progressive Web App (PWA) designed for people with A
 ## Architecture Overview
 
 ### PWA Configuration
+
 - Uses `@sveltejs/adapter-static` for static deployment
 - All routes prerendered (`+layout.ts`: `prerender = true`, `ssr = false`)
 - PWA manifest at `static/manifest.json` with mobile app configuration
 - Designed for offline-first usage with localStorage persistence
 
 ### State Management Pattern
+
 The app uses a custom Svelte store pattern for data persistence:
+
 - Stores are located in `src/lib/stores/`
 - Each store handles its own localStorage synchronization
 - Store methods automatically persist data when browser environment is available
 - Uses `browser` check from `$app/environment` to prevent SSR issues
 
 ### Data Storage
+
 - **Current**: localStorage with key prefix `flowstate-*`
 - **Future**: Backend integration planned (stores designed for easy migration)
 - All data operations are wrapped in browser checks for SSR compatibility
 
 ### UI Architecture
+
 - **Mobile-first design** with bottom navigation pattern
-- **Component structure**: 
+- **Component structure**:
   - `src/lib/components/` - Reusable UI components
   - `src/routes/+layout.svelte` - App shell with header and bottom nav
   - Individual route pages import specific feature components
@@ -46,6 +51,7 @@ The app uses a custom Svelte store pattern for data persistence:
 - **Navigation**: Bottom tab bar (currently only Routines implemented, others planned)
 
 ### ADHD-Specific Design Considerations
+
 - Large touch targets (44px minimum)
 - High contrast colors and clear visual hierarchy
 - Reduced motion support via CSS media queries
@@ -53,34 +59,43 @@ The app uses a custom Svelte store pattern for data persistence:
 - Clear focus states for accessibility
 
 ### Current Feature Implementation
+
 **Routines Module** (fully implemented):
+
 - CRUD operations with localStorage persistence
 - Time scheduling and frequency settings
 - Completion tracking with timestamps
 - Visual feedback and intuitive mobile interactions
 
 **Planned Features** (bottom nav placeholders exist):
+
 - Deadlines management
-- Goals tracking  
+- Goals tracking
 - Profile/settings
 
 ## Key Technical Details
 
 ### Store Pattern Example
+
 ```typescript
 // Each store follows this pattern:
 function createDataStore() {
-  const { subscribe, set, update } = writable<Data[]>([]);
-  return {
-    subscribe,
-    load: () => { /* Load from localStorage */ },
-    add: (item) => { /* Add and persist */ },
-    // ... other methods that auto-persist
-  };
+	const { subscribe, set, update } = writable<Data[]>([]);
+	return {
+		subscribe,
+		load: () => {
+			/* Load from localStorage */
+		},
+		add: (item) => {
+			/* Add and persist */
+		}
+		// ... other methods that auto-persist
+	};
 }
 ```
 
 ### PWA Requirements
+
 - Manifest linked in `src/app.html`
 - Icons must be 192x192 and 512x512 PNG
 - Static adapter requires all routes to be prerenderable

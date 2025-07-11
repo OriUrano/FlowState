@@ -2,7 +2,9 @@
 	import { Calendar, Clock, Target, User } from 'lucide-svelte';
 
 	export let activeTab: 'routines' | 'deadlines' | 'goals' | 'profile' = 'routines';
-	export let onTabChange: ((tab: 'routines' | 'deadlines' | 'goals' | 'profile') => void) | undefined = undefined;
+	export let onTabChange:
+		| ((tab: 'routines' | 'deadlines' | 'goals' | 'profile') => void)
+		| undefined = undefined;
 
 	function handleTabClick(tab: 'routines' | 'deadlines' | 'goals' | 'profile') {
 		if (onTabChange) {
