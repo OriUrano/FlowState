@@ -71,6 +71,20 @@
 - [ ] Add widget support for home screen
 - [ ] Create Apple Watch/Android Wear integration
 
+### 📅 Advanced Deadline Features (Phase 2)
+- [ ] Push notifications for due deadlines
+- [ ] Recurring deadlines support (weekly, monthly, yearly)
+- [ ] Calendar view integration with month/week views
+- [ ] Deadline dependency chains (task A must finish before task B)
+- [ ] Export/import functionality (CSV, JSON, calendar formats)
+- [ ] Advanced filtering and sorting (by project, tag, date range)
+- [ ] Deadline templates for common tasks
+- [ ] Time tracking integration with estimates vs actual
+- [ ] Deadline analytics and completion rate tracking
+- [ ] Subtask breakdown for complex deadlines
+- [ ] Collaborative deadlines with shared access
+- [ ] Integration with external calendar apps (Google Calendar, Outlook)
+
 ### 🔧 Technical Improvements
 - [ ] Add comprehensive unit tests
 - [ ] Implement E2E testing

@@ -1,7 +1,14 @@
 <script lang="ts">
 	import { Calendar, Clock, Target, User } from 'lucide-svelte';
 
-	export let activeTab = 'routines';
+	export let activeTab: 'routines' | 'deadlines' | 'goals' | 'profile' = 'routines';
+	export let onTabChange: ((tab: 'routines' | 'deadlines' | 'goals' | 'profile') => void) | undefined = undefined;
+
+	function handleTabClick(tab: 'routines' | 'deadlines' | 'goals' | 'profile') {
+		if (onTabChange) {
+			onTabChange(tab);
+		}
+	}
 </script>
 
 <nav
@@ -13,7 +20,7 @@
 			'routines'
 				? 'bg-blue-50 text-blue-600'
 				: 'text-gray-600'}"
-			on:click={() => (activeTab = 'routines')}
+			on:click={() => handleTabClick('routines')}
 		>
 			<Clock size={24} />
 			<span class="mt-1 text-xs font-medium">Routines</span>
@@ -23,8 +30,8 @@
 			class="flex flex-col items-center rounded-lg px-3 py-2 transition-colors {activeTab ===
 			'deadlines'
 				? 'bg-blue-50 text-blue-600'
-				: 'text-gray-400'}"
-			disabled
+				: 'text-gray-600'}"
+			on:click={() => handleTabClick('deadlines')}
 		>
 			<Calendar size={24} />
 			<span class="mt-1 text-xs font-medium">Deadlines</span>
