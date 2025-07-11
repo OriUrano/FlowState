@@ -11,12 +11,13 @@
 - [ ] Integrate Goals with bottom navigation
 
 ### 📅 Deadlines Module
-- [ ] Create Deadlines store (`src/lib/stores/deadlines.ts`)
-- [ ] Design Deadlines data structure (title, description, due date, priority, status)
-- [ ] Implement CRUD operations for Deadlines
-- [ ] Create Deadlines UI components
-- [ ] Add Deadlines route/page
-- [ ] Integrate Deadlines with bottom navigation
+- [x] Create Deadlines store (`src/lib/stores/deadlines.ts`)
+- [x] Design Deadlines data structure (title, description, due date, priority, status)
+- [x] Implement CRUD operations for Deadlines
+- [x] Create Deadlines UI components
+- [x] Add Deadlines route/page
+- [x] Integrate Deadlines with bottom navigation
+- [x] Add smooth slide animations for tab switching
 - [ ] Add deadline notifications/reminders
 
 ### 👤 Profile/Settings Module
@@ -98,14 +99,18 @@
 - [x] Project setup with SvelteKit and PWA configuration
 - [x] Mobile-first responsive design
 - [x] Routines module fully implemented
-- [x] localStorage persistence for routines
-- [x] Bottom navigation structure
+- [x] Deadlines module fully implemented
+- [x] localStorage persistence for routines and deadlines
+- [x] Bottom navigation structure with working tab switching
 - [x] ADHD-friendly UI design patterns
 - [x] PWA manifest and icons
+- [x] Smooth slide animations for tab transitions
+- [x] Priority indicators and urgency visualization for deadlines
+- [x] Form validation and error handling
 
 ### 🚧 In Progress
-- Currently only Routines module is functional
-- Other navigation tabs are disabled placeholders
+- Goals and Profile modules remain as placeholders
+- Advanced deadline features planned for Phase 2
 
 ### 🛠️ Technical Debt
 - [ ] Add TypeScript strict mode
