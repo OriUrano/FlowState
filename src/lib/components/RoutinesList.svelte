@@ -63,85 +63,90 @@
 	}
 </script>
 
-<div class="space-y-4 pb-8 px-4 py-6">
-	<div class="flex items-center justify-between">
-		<h2 class="text-2xl font-bold text-gray-900">Today's Routines</h2>
-		<button
-			on:click={() => (showAddForm = true)}
-			class="flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-700"
-			style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; max-width: 40px; max-height: 40px; flex-shrink: 0;"
-		>
-			<Plus size={20} />
-		</button>
+<div class="flex flex-col" style="max-height: calc(100vh - 136px);">
+	<!-- Fixed header -->
+	<div class="sticky top-0 z-10 flex-shrink-0 bg-gray-50 px-4 py-6">
+		<div class="flex items-center justify-between">
+			<h2 class="text-2xl font-bold text-gray-900">Today's Routines</h2>
+			<button
+				on:click={() => (showAddForm = true)}
+				class="flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-700"
+				style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; max-width: 40px; max-height: 40px; flex-shrink: 0;"
+			>
+				<Plus size={20} />
+			</button>
+		</div>
 	</div>
 
-
-	<div class="space-y-2">
-		{#each $routines as routine (routine.id)}
-			<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
-				<div class="flex items-center justify-between">
-					<div class="flex flex-1 items-center gap-3">
-						<button
-							on:click={() => toggleComplete(routine)}
-							class="flex items-center justify-center rounded-full border-2 transition-colors {routine.completed
-								? 'border-green-500 bg-green-500 text-white'
-								: 'border-gray-300 hover:border-green-500'}"
-							style="width: 28px; height: 28px; min-width: 28px; min-height: 28px; max-width: 28px; max-height: 28px; flex-shrink: 0;"
-						>
-							{#if routine.completed}
-								<Check size={14} />
-							{/if}
-						</button>
-
-						<div class="flex-1">
-							<h3
-								class="font-medium text-gray-900 {routine.completed
-									? 'line-through opacity-60'
-									: ''}"
+	<!-- Scrollable list container -->
+	<div class="flex-1 overflow-y-auto px-4 pb-8">
+		<div class="space-y-2">
+			{#each $routines as routine (routine.id)}
+				<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+					<div class="flex items-center justify-between">
+						<div class="flex flex-1 items-center gap-3">
+							<button
+								on:click={() => toggleComplete(routine)}
+								class="flex items-center justify-center rounded-full border-2 transition-colors {routine.completed
+									? 'border-green-500 bg-green-500 text-white'
+									: 'border-gray-300 hover:border-green-500'}"
+								style="width: 28px; height: 28px; min-width: 28px; min-height: 28px; max-width: 28px; max-height: 28px; flex-shrink: 0;"
 							>
-								{routine.name}
-							</h3>
-							<div class="mt-1 flex items-center gap-3 text-sm text-gray-500">
-								{#if routine.time}
-									<div class="flex items-center gap-1">
-										<Clock size={14} />
-										{formatTime(routine.time)}
-									</div>
+								{#if routine.completed}
+									<Check size={14} />
 								{/if}
-								<span class="capitalize">{routine.frequency}</span>
+							</button>
+
+							<div class="flex-1">
+								<h3
+									class="font-medium text-gray-900 {routine.completed
+										? 'line-through opacity-60'
+										: ''}"
+								>
+									{routine.name}
+								</h3>
+								<div class="mt-1 flex items-center gap-3 text-sm text-gray-500">
+									{#if routine.time}
+										<div class="flex items-center gap-1">
+											<Clock size={14} />
+											{formatTime(routine.time)}
+										</div>
+									{/if}
+									<span class="capitalize">{routine.frequency}</span>
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<div class="flex items-center gap-1">
-						<button
-							on:click={() => editRoutine(routine)}
-							class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-blue-500"
-						>
-							<Edit size={16} />
-						</button>
-						<button
-							on:click={() => deleteRoutine(routine.id)}
-							class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
-						>
-							<Trash2 size={16} />
-						</button>
+						<div class="flex items-center gap-1">
+							<button
+								on:click={() => editRoutine(routine)}
+								class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-blue-500"
+							>
+								<Edit size={16} />
+							</button>
+							<button
+								on:click={() => deleteRoutine(routine.id)}
+								class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
+							>
+								<Trash2 size={16} />
+							</button>
+						</div>
 					</div>
 				</div>
-			</div>
-		{:else}
-			<div class="text-center py-12">
-				<Clock size={48} class="mx-auto text-gray-300 mb-4" />
-				<h3 class="text-lg font-medium text-gray-900 mb-2">No routines yet</h3>
-				<p class="text-gray-500 mb-4">Create your first routine to get started</p>
-				<button
-					on:click={() => (showAddForm = true)}
-					class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
-				>
-					Add Your First Routine
-				</button>
-			</div>
-		{/each}
+			{:else}
+				<div class="text-center py-12">
+					<Clock size={48} class="mx-auto text-gray-300 mb-4" />
+					<h3 class="text-lg font-medium text-gray-900 mb-2">No routines yet</h3>
+					<p class="text-gray-500 mb-4">Create your first routine to get started</p>
+					<button
+						on:click={() => (showAddForm = true)}
+						class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+					>
+						Add Your First Routine
+					</button>
+				</div>
+			{/each}
+		</div>
 	</div>
 </div>
 
@@ -159,7 +164,7 @@
 		out:fade={{ duration: 200 }}
 	>
 		<div
-			class="w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl relative z-[61]"
+			class="relative z-[61] w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl"
 			on:click|stopPropagation
 			on:keydown|stopPropagation
 			role="document"

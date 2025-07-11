@@ -20,23 +20,23 @@
 
 	function validateForm(): boolean {
 		errors = {};
-		
+
 		if (!newDeadlineTitle.trim()) {
 			errors.title = 'Title is required';
 		}
-		
+
 		if (!newDeadlineDueDate) {
 			errors.dueDate = 'Due date is required';
 		} else {
 			const today = new Date();
 			const selectedDate = new Date(newDeadlineDueDate);
 			const todayStr = today.toISOString().split('T')[0];
-			
+
 			if (newDeadlineDueDate < todayStr) {
 				errors.dueDate = 'Due date cannot be in the past';
 			}
 		}
-		
+
 		return Object.keys(errors).length === 0;
 	}
 
@@ -47,8 +47,8 @@
 
 		const tags = newDeadlineTags
 			.split(',')
-			.map(tag => tag.trim())
-			.filter(tag => tag.length > 0);
+			.map((tag) => tag.trim())
+			.filter((tag) => tag.length > 0);
 
 		deadlines.add({
 			title: newDeadlineTitle.trim(),
@@ -119,8 +119,8 @@
 
 	function formatShortDate(dueDate: string): string {
 		const due = new Date(dueDate);
-		return due.toLocaleDateString('en-US', { 
-			month: 'short', 
+		return due.toLocaleDateString('en-US', {
+			month: 'short',
 			day: 'numeric'
 		});
 	}
@@ -150,12 +150,12 @@
 	function getDueDateColor(status: 'pending' | 'completed' | 'overdue', dueDate: string): string {
 		if (status === 'completed') return 'text-gray-500';
 		if (status === 'overdue') return 'text-red-600';
-		
+
 		const due = new Date(dueDate);
 		const now = new Date();
 		const diffTime = due.getTime() - now.getTime();
 		const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-		
+
 		if (diffDays === 0) return 'text-orange-600'; // Due today
 		if (diffDays <= 3) return 'text-yellow-600'; // Due soon
 		return 'text-gray-600'; // Future
@@ -166,117 +166,139 @@
 		// Completed items go to bottom
 		if (a.status === 'completed' && b.status !== 'completed') return 1;
 		if (b.status === 'completed' && a.status !== 'completed') return -1;
-		
+
 		// Overdue items go to top
 		if (a.status === 'overdue' && b.status !== 'overdue') return -1;
 		if (b.status === 'overdue' && a.status !== 'overdue') return 1;
-		
+
 		// Sort by due date
 		return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
 	});
 </script>
 
-<div class="space-y-4 pb-8 px-4 py-6">
-	<div class="flex items-center justify-between">
-		<h2 class="text-2xl font-bold text-gray-900">Deadlines</h2>
-		<button
-			on:click={() => (showAddForm = true)}
-			class="flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-700"
-			style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; max-width: 40px; max-height: 40px; flex-shrink: 0;"
-		>
-			<Plus size={20} />
-		</button>
+<div class="flex flex-col" style="max-height: calc(100vh - 200px);">
+	<!-- Fixed header -->
+	<div class="sticky top-0 z-10 flex-shrink-0 bg-gray-50 px-4 py-6">
+		<div class="flex items-center justify-between">
+			<h2 class="text-2xl font-bold text-gray-900">Deadlines</h2>
+			<button
+				on:click={() => (showAddForm = true)}
+				class="flex items-center justify-center rounded-full bg-blue-600 text-white shadow-lg transition-colors hover:bg-blue-700"
+				style="width: 40px; height: 40px; min-width: 40px; min-height: 40px; max-width: 40px; max-height: 40px; flex-shrink: 0;"
+			>
+				<Plus size={20} />
+			</button>
+		</div>
 	</div>
 
-	<div class="space-y-2">
-		{#each sortedDeadlines as deadline (deadline.id)}
-			<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
-				<div class="flex items-start justify-between">
-					<div class="flex flex-1 items-start gap-3">
-						<button
-							on:click={() => toggleComplete(deadline)}
-							class="flex items-center justify-center rounded-full border-2 transition-colors {deadline.status === 'completed'
-								? 'border-green-500 bg-green-500 text-white'
-								: 'border-gray-300 hover:border-green-500'} mt-1"
-							style="width: 28px; height: 28px; min-width: 28px; min-height: 28px; max-width: 28px; max-height: 28px; flex-shrink: 0;"
-						>
-							{#if deadline.status === 'completed'}
-								<Check size={14} />
-							{/if}
-						</button>
+	<!-- Scrollable list container -->
+	<div class="flex-1 overflow-y-auto px-4 pb-8">
+		<div class="space-y-2">
+			{#each sortedDeadlines as deadline (deadline.id)}
+				<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+					<div class="flex items-start justify-between">
+						<div class="flex flex-1 items-start gap-3">
+							<button
+								on:click={() => toggleComplete(deadline)}
+								class="flex items-center justify-center rounded-full border-2 transition-colors {deadline.status ===
+								'completed'
+									? 'border-green-500 bg-green-500 text-white'
+									: 'border-gray-300 hover:border-green-500'} mt-1"
+								style="width: 28px; height: 28px; min-width: 28px; min-height: 28px; max-width: 28px; max-height: 28px; flex-shrink: 0;"
+							>
+								{#if deadline.status === 'completed'}
+									<Check size={14} />
+								{/if}
+							</button>
 
-						<div class="flex-1 min-w-0">
-							<div class="flex items-center gap-2 mb-1">
-								<!-- Priority indicator -->
-								<div class="w-2 h-2 rounded-full {getPriorityColor(deadline.priority)} flex-shrink-0"></div>
-								<h3
-									class="font-medium text-gray-900 {deadline.status === 'completed'
-										? 'line-through opacity-60'
-										: ''}"
-								>
-									{deadline.title}
-								</h3>
-							</div>
-
-							{#if deadline.description}
-								<p class="text-sm text-gray-600 mb-2 {deadline.status === 'completed' ? 'opacity-60' : ''}">{deadline.description}</p>
-							{/if}
-
-							<div class="flex items-center gap-3 text-xs">
-								<div class="flex items-center gap-1 {getDueDateColor(deadline.status, deadline.dueDate)}">
-									<Calendar size={12} />
-									<span>{formatDueDate(deadline.dueDate)}</span>
+							<div class="min-w-0 flex-1">
+								<div class="mb-1 flex items-center gap-2">
+									<!-- Priority indicator -->
+									<div
+										class="h-2 w-2 rounded-full {getPriorityColor(deadline.priority)} flex-shrink-0"
+									></div>
+									<h3
+										class="font-medium text-gray-900 {deadline.status === 'completed'
+											? 'line-through opacity-60'
+											: ''}"
+									>
+										{deadline.title}
+									</h3>
 								</div>
-								
-								{#if deadline.status === 'overdue' && deadline.status !== 'completed'}
-									<div class="flex items-center gap-1 text-red-600">
-										<AlertCircle size={12} />
-										<span class="font-medium">Overdue</span>
-									</div>
+
+								{#if deadline.description}
+									<p
+										class="mb-2 text-sm text-gray-600 {deadline.status === 'completed'
+											? 'opacity-60'
+											: ''}"
+									>
+										{deadline.description}
+									</p>
 								{/if}
-								
-								<span class="capitalize text-gray-500">{deadline.priority} priority</span>
-								
-								{#if deadline.tags && deadline.tags.length > 0}
-									<div class="flex gap-1">
-										{#each deadline.tags as tag}
-											<span class="px-2 py-0.5 text-xs bg-blue-100 text-blue-700 rounded-full">{tag}</span>
-										{/each}
+
+								<div class="flex items-center gap-3 text-xs">
+									<div
+										class="flex items-center gap-1 {getDueDateColor(
+											deadline.status,
+											deadline.dueDate
+										)}"
+									>
+										<Calendar size={12} />
+										<span>{formatDueDate(deadline.dueDate)}</span>
 									</div>
-								{/if}
+
+									{#if deadline.status === 'overdue'}
+										<div class="flex items-center gap-1 text-red-600">
+											<AlertCircle size={12} />
+											<span class="font-medium">Overdue</span>
+										</div>
+									{/if}
+
+									<span class="text-gray-500 capitalize">{deadline.priority} priority</span>
+
+									{#if deadline.tags && deadline.tags.length > 0}
+										<div class="flex gap-1">
+											{#each deadline.tags as tag}
+												<span class="rounded-full bg-blue-100 px-2 py-0.5 text-xs text-blue-700"
+													>{tag}</span
+												>
+											{/each}
+										</div>
+									{/if}
+								</div>
 							</div>
 						</div>
-					</div>
 
-					<div class="flex items-center gap-1">
-						<button
-							on:click={() => editDeadline(deadline)}
-							class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-blue-500"
-						>
-							<Edit size={16} />
-						</button>
-						<button
-							on:click={() => deleteDeadline(deadline.id)}
-							class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
-						>
-							<Trash2 size={16} />
-						</button>
+						<div class="flex items-center gap-1">
+							<button
+								on:click={() => editDeadline(deadline)}
+								class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-blue-500"
+							>
+								<Edit size={16} />
+							</button>
+							<button
+								on:click={() => deleteDeadline(deadline.id)}
+								class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
+							>
+								<Trash2 size={16} />
+							</button>
+						</div>
 					</div>
 				</div>
-			</div>
-		{:else}
-			<div class="text-center py-12">
-				<Calendar size={48} class="mx-auto text-gray-300 mb-4" />
-				<h3 class="text-lg font-medium text-gray-900 mb-2">No deadlines yet</h3>
-				<p class="text-gray-500 mb-4">Add your first deadline to stay organized</p>
-				<button
-					on:click={() => (showAddForm = true)}
-					class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
-				>
-					Add Your First Deadline
-				</button>
-			</div>
-		{/each}
+			{:else}
+				<div class="text-center py-12">
+					<Calendar size={48} class="mx-auto text-gray-300 mb-4" />
+					<h3 class="text-lg font-medium text-gray-900 mb-2">No deadlines yet</h3>
+					<p class="text-gray-500 mb-4">Add your first deadline to stay organized</p>
+					<button
+						on:click={() => (showAddForm = true)}
+						class="bg-blue-600 text-white px-6 py-2 rounded-md hover:bg-blue-700 transition-colors"
+					>
+						Add Your First Deadline
+					</button>
+				</div>
+			{/each}
+		</div>
 	</div>
 </div>
 
@@ -294,7 +316,7 @@
 		out:fade={{ duration: 200 }}
 	>
 		<div
-			class="w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl relative z-[61]"
+			class="relative z-[61] w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl"
 			on:click|stopPropagation
 			on:keydown|stopPropagation
 			role="document"
@@ -313,7 +335,9 @@
 						type="text"
 						bind:value={newDeadlineTitle}
 						placeholder="e.g., Submit tax returns"
-						class="w-full rounded-md border {errors.title ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+						class="w-full rounded-md border {errors.title
+							? 'border-red-500'
+							: 'border-gray-300'} px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 					/>
 					{#if errors.title}
 						<p class="mt-1 text-sm text-red-600">{errors.title}</p>
@@ -341,7 +365,9 @@
 						id="deadline-due-date"
 						type="date"
 						bind:value={newDeadlineDueDate}
-						class="w-full rounded-md border {errors.dueDate ? 'border-red-500' : 'border-gray-300'} px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+						class="w-full rounded-md border {errors.dueDate
+							? 'border-red-500'
+							: 'border-gray-300'} px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
 					/>
 					{#if errors.dueDate}
 						<p class="mt-1 text-sm text-red-600">{errors.dueDate}</p>
