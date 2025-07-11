@@ -176,7 +176,7 @@
 	});
 </script>
 
-<div class="space-y-4 pb-8">
+<div class="space-y-4 pb-8 px-4 py-6">
 	<div class="flex items-center justify-between">
 		<h2 class="text-2xl font-bold text-gray-900">Deadlines</h2>
 		<button

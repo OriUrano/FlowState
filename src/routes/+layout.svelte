@@ -12,7 +12,7 @@
 		</div>
 	</header>
 
-	<main class="px-4 py-6">
+	<main class="">
 		{@render children()}
 	</main>
 </div>
