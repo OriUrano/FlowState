@@ -8,10 +8,44 @@
 	let newRoutineName = '';
 	let newRoutineTime = '';
 	let newRoutineFrequency: 'daily' | 'weekly' | 'custom' = 'daily';
+	
+	let scrollContainer: HTMLElement;
+	let fadeClass = 'fade-none';
 
 	onMount(() => {
 		routines.load();
+		updateFadeClass();
 	});
+
+	function updateFadeClass() {
+		if (!scrollContainer) return;
+		
+		const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
+		const isAtTop = scrollTop <= 2; // Small threshold for touch scrolling
+		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 2;
+		const canScroll = scrollHeight > clientHeight;
+		
+		if (!canScroll) {
+			fadeClass = 'fade-none';
+		} else if (isAtTop && isAtBottom) {
+			fadeClass = 'fade-none';
+		} else if (isAtTop) {
+			fadeClass = 'fade-bottom';
+		} else if (isAtBottom) {
+			fadeClass = 'fade-top';
+		} else {
+			fadeClass = 'fade-both';
+		}
+	}
+
+	function handleScroll() {
+		updateFadeClass();
+	}
+
+	// Update fade class when routines change
+	$: if ($routines) {
+		setTimeout(updateFadeClass, 0);
+	}
 
 	function addRoutine() {
 		if (newRoutineName.trim()) {
@@ -79,7 +113,11 @@
 	</div>
 
 	<!-- Scrollable list container -->
-	<div class="flex-1 overflow-y-auto px-4 pb-8">
+	<div 
+		bind:this={scrollContainer}
+		on:scroll={handleScroll}
+		class="scrollable-list-container {fadeClass} flex-1 overflow-y-auto px-4 pb-8"
+	>
 		<div class="space-y-2">
 			{#each $routines as routine (routine.id)}
 				<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">

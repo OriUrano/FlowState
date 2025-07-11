@@ -48,3 +48,97 @@ select:focus-visible {
 .safe-area-inset-bottom {
 	padding-bottom: max(0.5rem, env(safe-area-inset-bottom));
 }
+
+/* Dynamic scrollable list fade effects */
+.scrollable-list-container {
+	position: relative;
+	transition: mask-image 0.15s ease-out;
+	-webkit-transition: -webkit-mask-image 0.15s ease-out;
+}
+
+/* No fade - when list is short or at both edges */
+.scrollable-list-container.fade-none {
+	-webkit-mask-image: none;
+	mask-image: none;
+}
+
+/* Fade only at top - when scrolled to bottom */
+.scrollable-list-container.fade-top {
+	-webkit-mask-image: linear-gradient(to bottom, 
+		transparent 0px, 
+		black 30px, 
+		black 100%);
+	mask-image: linear-gradient(to bottom, 
+		transparent 0px, 
+		black 30px, 
+		black 100%);
+}
+
+/* Fade only at bottom - when scrolled to top */
+.scrollable-list-container.fade-bottom {
+	-webkit-mask-image: linear-gradient(to bottom, 
+		black 0%, 
+		black calc(100% - 30px), 
+		transparent 100%);
+	mask-image: linear-gradient(to bottom, 
+		black 0%, 
+		black calc(100% - 30px), 
+		transparent 100%);
+}
+
+/* Fade at both ends - when scrolled in middle */
+.scrollable-list-container.fade-both {
+	-webkit-mask-image: linear-gradient(to bottom, 
+		transparent 0px, 
+		black 30px, 
+		black calc(100% - 30px), 
+		transparent 100%);
+	mask-image: linear-gradient(to bottom, 
+		transparent 0px, 
+		black 30px, 
+		black calc(100% - 30px), 
+		transparent 100%);
+}
+
+/* Reduce fade effects for users who prefer reduced motion */
+@media (prefers-reduced-motion: reduce) {
+	.scrollable-list-container {
+		transition: none;
+		-webkit-transition: none;
+	}
+	
+	.scrollable-list-container.fade-top {
+		-webkit-mask-image: linear-gradient(to bottom, 
+			transparent 0px, 
+			black 15px, 
+			black 100%);
+		mask-image: linear-gradient(to bottom, 
+			transparent 0px, 
+			black 15px, 
+			black 100%);
+	}
+	
+	.scrollable-list-container.fade-bottom {
+		-webkit-mask-image: linear-gradient(to bottom, 
+			black 0%, 
+			black calc(100% - 15px), 
+			transparent 100%);
+		mask-image: linear-gradient(to bottom, 
+			black 0%, 
+			black calc(100% - 15px), 
+			transparent 100%);
+	}
+	
+	.scrollable-list-container.fade-both {
+		-webkit-mask-image: linear-gradient(to bottom, 
+			transparent 0px, 
+			black 15px, 
+			black calc(100% - 15px), 
+			transparent 100%);
+		mask-image: linear-gradient(to bottom, 
+			transparent 0px, 
+			black 15px, 
+			black calc(100% - 15px), 
+			transparent 100%);
+	}
+}
