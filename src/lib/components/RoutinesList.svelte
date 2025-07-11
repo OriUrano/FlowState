@@ -2,6 +2,7 @@
 	import { Check, Clock, Plus, Trash2, Edit } from 'lucide-svelte';
 	import { routines, type Routine } from '$lib/stores/routines';
 	import { onMount } from 'svelte';
+	import { fly, fade } from 'svelte/transition';
 
 	let showAddForm = false;
 	let newRoutineName = '';
@@ -44,6 +45,14 @@
 		console.log('Edit routine:', routine);
 	}
 
+	function closeModal() {
+		showAddForm = false;
+		// Clear form fields when closing
+		newRoutineName = '';
+		newRoutineTime = '';
+		newRoutineFrequency = 'daily';
+	}
+
 	function formatTime(time?: string) {
 		if (!time) return '';
 		const [hours, minutes] = time.split(':');
@@ -66,68 +75,6 @@
 		</button>
 	</div>
 
-	{#if showAddForm}
-		<div class="rounded-lg border border-gray-200 bg-white p-4 shadow-sm">
-			<h3 class="mb-3 font-medium text-gray-900">Add New Routine</h3>
-
-			<div class="space-y-3">
-				<div>
-					<label for="routine-name" class="mb-1 block text-sm font-medium text-gray-700">
-						Routine Name
-					</label>
-					<input
-						id="routine-name"
-						type="text"
-						bind:value={newRoutineName}
-						placeholder="e.g., Morning meditation"
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					/>
-				</div>
-
-				<div>
-					<label for="routine-time" class="mb-1 block text-sm font-medium text-gray-700">
-						Time (optional)
-					</label>
-					<input
-						id="routine-time"
-						type="time"
-						bind:value={newRoutineTime}
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					/>
-				</div>
-
-				<div>
-					<label for="routine-frequency" class="mb-1 block text-sm font-medium text-gray-700">
-						Frequency
-					</label>
-					<select
-						id="routine-frequency"
-						bind:value={newRoutineFrequency}
-						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
-					>
-						<option value="daily">Daily</option>
-						<option value="weekly">Weekly</option>
-						<option value="custom">Custom</option>
-					</select>
-				</div>
-			</div>
-
-			<div class="mt-4 flex gap-2">
-				<button
-					on:click={addRoutine}
-					class="flex-1 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
-				>
-					Add Routine
-				</button>
-				<button
-					on:click={() => (showAddForm = false)}
-					class="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
-				>
-					Cancel
-				</button>
-			</div>
-		</div>
-	{/if}
 
 	<div class="space-y-2">
 		{#each $routines as routine (routine.id)}
@@ -197,3 +144,86 @@
 		{/each}
 	</div>
 </div>
+
+<!-- Modal Overlay -->
+{#if showAddForm}
+	<div
+		class="fixed inset-0 z-[60] flex items-end justify-center bg-black/60"
+		on:click={closeModal}
+		on:keydown={(e) => e.key === 'Escape' && closeModal()}
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="modal-title"
+		tabindex="-1"
+		in:fade={{ duration: 200 }}
+		out:fade={{ duration: 200 }}
+	>
+		<div
+			class="w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl relative z-[61]"
+			on:click|stopPropagation
+			on:keydown|stopPropagation
+			role="document"
+			in:fly={{ y: 300, duration: 300 }}
+			out:fly={{ y: 300, duration: 200 }}
+		>
+			<h3 id="modal-title" class="mb-4 text-lg font-semibold text-gray-900">Add New Routine</h3>
+
+			<div class="space-y-4">
+				<div>
+					<label for="routine-name" class="mb-1 block text-sm font-medium text-gray-700">
+						Routine Name
+					</label>
+					<input
+						id="routine-name"
+						type="text"
+						bind:value={newRoutineName}
+						placeholder="e.g., Morning meditation"
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+				</div>
+
+				<div>
+					<label for="routine-time" class="mb-1 block text-sm font-medium text-gray-700">
+						Time (optional)
+					</label>
+					<input
+						id="routine-time"
+						type="time"
+						bind:value={newRoutineTime}
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+				</div>
+
+				<div>
+					<label for="routine-frequency" class="mb-1 block text-sm font-medium text-gray-700">
+						Frequency
+					</label>
+					<select
+						id="routine-frequency"
+						bind:value={newRoutineFrequency}
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					>
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="custom">Custom</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="mt-6 flex gap-3">
+				<button
+					on:click={addRoutine}
+					class="flex-1 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+				>
+					Add Routine
+				</button>
+				<button
+					on:click={() => (showAddForm = false)}
+					class="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
+				>
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}
