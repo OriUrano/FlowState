@@ -20,16 +20,17 @@
 
 	function calculateScrollHeight() {
 		if (typeof window === 'undefined') return;
-		
+
 		const viewportHeight = window.innerHeight;
 		const bottomNav = document.querySelector('nav') as HTMLElement;
 		const flowStateHeader = document.querySelector('header') as HTMLElement;
-		
+
 		const bottomNavHeight = bottomNav?.offsetHeight || 80;
 		const flowStateHeaderHeight = flowStateHeader?.offsetHeight || 60;
 		const componentHeaderHeight = componentHeader?.offsetHeight || 96;
-		
-		const availableHeight = viewportHeight - bottomNavHeight - flowStateHeaderHeight - componentHeaderHeight - 3;
+
+		const availableHeight =
+			viewportHeight - bottomNavHeight - flowStateHeaderHeight - componentHeaderHeight - 3;
 		scrollContainerHeight = `${Math.max(availableHeight, 200)}px`;
 	}
 
@@ -38,14 +39,14 @@
 		// Refresh statuses when component mounts (in case app was closed and reopened)
 		deadlines.refreshStatuses();
 		updateFadeClass();
-		
+
 		// Calculate initial height
 		setTimeout(calculateScrollHeight, 0);
-		
+
 		// Recalculate on window resize
 		const handleResize = () => calculateScrollHeight();
 		window.addEventListener('resize', handleResize);
-		
+
 		return () => {
 			window.removeEventListener('resize', handleResize);
 		};
