@@ -207,7 +207,7 @@
 		bind:this={scrollContainer}
 		on:scroll={handleScroll}
 		class="scrollable-list-container {fadeClass} overflow-y-auto px-4 pb-8"
-		style="height: calc(100vh - 14rem);"
+		style="height: calc(100vh - 17rem);"
 	>
 		<div class="space-y-2">
 			{#each sortedDeadlines as deadline, index (deadline.id)}
