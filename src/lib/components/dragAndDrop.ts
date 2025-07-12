@@ -6,7 +6,7 @@ interface DragState {
 	dropIndex: number;
 	longPressTimer: number | null;
 	element: HTMLElement | null;
-	dropIndicator: HTMLElement | null;
+	shiftedElements: Map<HTMLElement, { transform: string; zIndex: string; position: string }>;
 }
 
 const LONG_PRESS_DURATION = 500; // 500ms for long press
@@ -24,7 +24,7 @@ export function dragAndDrop(
 		dropIndex: -1,
 		longPressTimer: null,
 		element: null,
-		dropIndicator: null
+		shiftedElements: new Map()
 	};
 
 	function startLongPress(event: TouchEvent | MouseEvent) {
@@ -52,27 +52,23 @@ export function dragAndDrop(
 		state.element = node;
 
 		// Create visual feedback for dragged element
-		node.style.transform = 'scale(1.05)';
-		node.style.zIndex = '1000';
-		node.style.opacity = '0.9';
+		node.style.transform = 'scale(1.05) translateZ(100px)';
+		node.style.position = 'relative';
+		node.style.zIndex = '10000';
+		node.style.opacity = '1.0';
 		node.style.transition = 'none';
 		node.style.pointerEvents = 'none';
 
-		// Create drop indicator - a thin line to show where item will be dropped
-		state.dropIndicator = document.createElement('div');
-		state.dropIndicator.style.cssText = `
-			position: absolute;
-			left: 12px;
-			right: 12px;
-			height: 3px;
-			background: #3b82f6;
-			border-radius: 2px;
-			z-index: 999;
-			opacity: 0.8;
-			pointer-events: none;
-			box-shadow: 0 1px 3px rgba(59, 130, 246, 0.5);
-			margin: -2px 0;
-		`;
+		// Enable smooth transitions for all container elements
+		const container = node.parentElement;
+		if (container) {
+			const items = Array.from(container.children) as HTMLElement[];
+			items.forEach((item) => {
+				if (item !== node) {
+					item.style.transition = 'transform 200ms ease-out';
+				}
+			});
+		}
 
 		// Add global listeners
 		document.addEventListener('mousemove', handleMove);
@@ -102,53 +98,86 @@ export function dragAndDrop(
 
 		// Update drag element position
 		if (state.element) {
-			state.element.style.transform = `translateY(${deltaY}px) scale(1.05)`;
+			state.element.style.transform = `translateY(${deltaY}px) scale(1.05) translateZ(100px)`;
 		}
 
-		// Calculate and update drop position
+		// Calculate drop position and shift elements
 		const container = node.parentElement;
-		if (container && state.dropIndicator) {
+		if (container) {
 			const items = Array.from(container.children).filter(
-				(child) => child !== state.element && child !== state.dropIndicator
+				(child) => child !== state.element
 			) as HTMLElement[];
 
 			let newDropIndex = 0;
-			let dropY = 0;
 
 			// Find the best drop position
 			let found = false;
 			for (let i = 0; i < items.length; i++) {
 				const item = items[i];
 				const rect = item.getBoundingClientRect();
-				const containerRect = container.getBoundingClientRect();
 				const midY = rect.top + rect.height / 2;
 
 				if (clientY < midY) {
 					newDropIndex = i;
-					dropY = rect.top - containerRect.top;
 					found = true;
 					break;
 				}
 			}
 
 			// If not found, drop at the end
-			if (!found && items.length > 0) {
+			if (!found) {
 				newDropIndex = items.length;
-				const lastItem = items[items.length - 1];
-				const lastRect = lastItem.getBoundingClientRect();
-				const containerRect = container.getBoundingClientRect();
-				dropY = lastRect.bottom - containerRect.top;
-			} else if (!found && items.length === 0) {
-				newDropIndex = 0;
-				dropY = 0;
 			}
 
-			// Update drop indicator position
-			state.dropIndicator.style.top = `${dropY}px`;
+			// Reset previous shifts
+			state.shiftedElements.forEach((originalStyles, element) => {
+				element.style.transform = originalStyles.transform;
+				element.style.zIndex = originalStyles.zIndex;
+				element.style.position = originalStyles.position;
+			});
+			state.shiftedElements.clear();
 
-			// Add to container if not already there
-			if (!state.dropIndicator.parentNode) {
-				container.appendChild(state.dropIndicator);
+			// Apply new shifts
+			const draggedElementHeight = state.element?.getBoundingClientRect().height || 0;
+			const gap = draggedElementHeight + 8; // Add 8px for spacing
+
+			// Shift elements to create a visual gap
+			if (state.dragIndex < newDropIndex) {
+				// Moving down: shift elements between original and new position up
+				for (let i = state.dragIndex; i < newDropIndex; i++) {
+					if (i < items.length) {
+						const element = items[i];
+						const currentTransform = element.style.transform || '';
+						const currentZIndex = element.style.zIndex || '';
+						const currentPosition = element.style.position || '';
+						state.shiftedElements.set(element, {
+							transform: currentTransform,
+							zIndex: currentZIndex,
+							position: currentPosition
+						});
+						element.style.transform = `translateY(-${gap}px) ${currentTransform}`.trim();
+						element.style.position = 'relative';
+						element.style.zIndex = '500';
+					}
+				}
+			} else if (state.dragIndex > newDropIndex) {
+				// Moving up: shift elements between new and original position down
+				for (let i = newDropIndex; i < state.dragIndex; i++) {
+					if (i < items.length) {
+						const element = items[i];
+						const currentTransform = element.style.transform || '';
+						const currentZIndex = element.style.zIndex || '';
+						const currentPosition = element.style.position || '';
+						state.shiftedElements.set(element, {
+							transform: currentTransform,
+							zIndex: currentZIndex,
+							position: currentPosition
+						});
+						element.style.transform = `translateY(${gap}px) ${currentTransform}`.trim();
+						element.style.position = 'relative';
+						element.style.zIndex = '500';
+					}
+				}
 			}
 
 			state.dropIndex = newDropIndex;
@@ -169,16 +198,21 @@ export function dragAndDrop(
 		// Reset styles
 		if (state.element) {
 			state.element.style.transform = '';
+			state.element.style.position = '';
 			state.element.style.zIndex = '';
 			state.element.style.opacity = '';
 			state.element.style.transition = '';
 			state.element.style.pointerEvents = '';
 		}
 
-		// Remove drop indicator
-		if (state.dropIndicator) {
-			state.dropIndicator.remove();
-		}
+		// Reset all shifted elements
+		state.shiftedElements.forEach((originalStyles, element) => {
+			element.style.transform = originalStyles.transform;
+			element.style.zIndex = originalStyles.zIndex;
+			element.style.position = originalStyles.position;
+			element.style.transition = '';
+		});
+		state.shiftedElements.clear();
 
 		// Restore scrolling
 		document.body.style.overflowY = '';
@@ -193,7 +227,6 @@ export function dragAndDrop(
 		state.dragIndex = -1;
 		state.dropIndex = -1;
 		state.element = null;
-		state.dropIndicator = null;
 	}
 
 	function handleTouchStart(event: TouchEvent) {
