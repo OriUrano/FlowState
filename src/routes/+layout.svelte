@@ -4,7 +4,7 @@
 	let { children } = $props();
 </script>
 
-<div class="min-h-screen bg-gray-50 pb-20">
+<div class="flex h-screen flex-col bg-gray-50">
 	<header class="sticky top-0 z-20 bg-white px-4 py-3 shadow-sm">
 		<div class="flex items-center gap-3">
 			<img src="/logo.svg" alt="FlowState Logo" class="h-8 w-8" />
@@ -12,7 +12,7 @@
 		</div>
 	</header>
 
-	<main class="">
+	<main class="flex-1" style="padding-bottom: 5rem;">
 		{@render children()}
 	</main>
 </div>

@@ -64,7 +64,6 @@
 			errors.dueDate = 'Due date is required';
 		} else {
 			const today = new Date();
-			const selectedDate = new Date(newDeadlineDueDate);
 			const todayStr = today.toISOString().split('T')[0];
 
 			if (newDeadlineDueDate < todayStr) {
@@ -152,14 +151,6 @@
 		}
 	}
 
-	function formatShortDate(dueDate: string): string {
-		const due = new Date(dueDate);
-		return due.toLocaleDateString('en-US', {
-			month: 'short',
-			day: 'numeric'
-		});
-	}
-
 	function getPriorityColor(priority: 'high' | 'medium' | 'low'): string {
 		switch (priority) {
 			case 'high':
@@ -168,17 +159,6 @@
 				return 'bg-yellow-500';
 			case 'low':
 				return 'bg-gray-400';
-		}
-	}
-
-	function getStatusColor(status: 'pending' | 'completed' | 'overdue'): string {
-		switch (status) {
-			case 'overdue':
-				return 'text-red-600';
-			case 'completed':
-				return 'text-green-600';
-			case 'pending':
-				return 'text-gray-600';
 		}
 	}
 
@@ -207,7 +187,7 @@
 	});
 </script>
 
-<div class="flex flex-col" style="max-height: calc(100vh - 200px);">
+<div class="flex h-full flex-col">
 	<!-- Fixed header -->
 	<div class="sticky top-0 z-10 flex-shrink-0 bg-gray-50 px-4 py-6">
 		<div class="flex items-center justify-between">
@@ -226,7 +206,8 @@
 	<div
 		bind:this={scrollContainer}
 		on:scroll={handleScroll}
-		class="scrollable-list-container {fadeClass} flex-1 overflow-y-auto px-4 pb-8"
+		class="scrollable-list-container {fadeClass} overflow-y-auto px-4 pb-8"
+		style="height: calc(100vh - 14rem);"
 	>
 		<div class="space-y-2">
 			{#each sortedDeadlines as deadline, index (deadline.id)}

@@ -105,7 +105,7 @@
 	$: sortedRoutines = [...$routines].sort((a, b) => a.order - b.order);
 </script>
 
-<div class="flex flex-col" style="max-height: calc(100vh - 136px);">
+<div class="flex h-full flex-col">
 	<!-- Fixed header -->
 	<div class="sticky top-0 z-10 flex-shrink-0 bg-gray-50 px-4 py-6">
 		<div class="flex items-center justify-between">
@@ -124,7 +124,8 @@
 	<div
 		bind:this={scrollContainer}
 		on:scroll={handleScroll}
-		class="scrollable-list-container {fadeClass} flex-1 overflow-y-auto px-4 pb-8"
+		class="scrollable-list-container {fadeClass} overflow-y-auto px-4 pb-8"
+		style="height: calc(100vh - 14rem);"
 	>
 		<div class="space-y-2">
 			{#each sortedRoutines as routine, index (routine.id)}
