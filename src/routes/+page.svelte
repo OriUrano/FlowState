@@ -40,11 +40,11 @@
 	$: transitionDuration = reducedMotion ? 0 : 250;
 </script>
 
-<div class="tab-wrapper h-full">
-	<div class="tab-container h-full">
+<div class="tab-wrapper h-full overflow-hidden">
+	<div class="tab-container h-full overflow-hidden">
 		{#key activeTab}
 			<div
-				class="tab-content h-full"
+				class="tab-content h-full overflow-hidden"
 				in:fly={{ x: slideDirection, duration: transitionDuration, delay: 0 }}
 				out:fly={{ x: -slideDirection, duration: transitionDuration * 0.8, delay: 0 }}
 			>

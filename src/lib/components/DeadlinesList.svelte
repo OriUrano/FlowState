@@ -216,7 +216,7 @@
 	});
 </script>
 
-<div class="flex h-full flex-col">
+<div class="flex h-full flex-col overflow-hidden">
 	<!-- Fixed header -->
 	<div bind:this={componentHeader} class="sticky top-0 z-10 flex-shrink-0 bg-gray-50 px-4 py-6">
 		<div class="flex items-center justify-between">
