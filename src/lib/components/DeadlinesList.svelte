@@ -3,6 +3,7 @@
 	import { deadlines, type Deadline } from '$lib/stores/deadlines';
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
+	import { dragAndDrop } from './dragAndDrop';
 
 	let showAddForm = false;
 	let newDeadlineTitle = '';
@@ -195,18 +196,14 @@
 		return 'text-gray-600'; // Future
 	}
 
-	// Sort deadlines: overdue first, then by due date ascending
+	function handleReorder(fromIndex: number, toIndex: number) {
+		deadlines.reorder(fromIndex, toIndex);
+	}
+
+	// Sort deadlines: by order when manually sorted, otherwise by status and due date
 	$: sortedDeadlines = $deadlines.slice().sort((a, b) => {
-		// Completed items go to bottom
-		if (a.status === 'completed' && b.status !== 'completed') return 1;
-		if (b.status === 'completed' && a.status !== 'completed') return -1;
-
-		// Overdue items go to top
-		if (a.status === 'overdue' && b.status !== 'overdue') return -1;
-		if (b.status === 'overdue' && a.status !== 'overdue') return 1;
-
-		// Sort by due date
-		return new Date(a.dueDate).getTime() - new Date(b.dueDate).getTime();
+		// First sort by manual order
+		return a.order - b.order;
 	});
 </script>
 
@@ -232,8 +229,11 @@
 		class="scrollable-list-container {fadeClass} flex-1 overflow-y-auto px-4 pb-8"
 	>
 		<div class="space-y-2">
-			{#each sortedDeadlines as deadline (deadline.id)}
-				<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+			{#each sortedDeadlines as deadline, index (deadline.id)}
+				<div 
+					class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm"
+					use:dragAndDrop={{ onReorder: handleReorder, index }}
+				>
 					<div class="flex items-start justify-between">
 						<div class="flex flex-1 items-start gap-3">
 							<button

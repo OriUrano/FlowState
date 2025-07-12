@@ -3,6 +3,7 @@
 	import { routines, type Routine } from '$lib/stores/routines';
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
+	import { dragAndDrop } from './dragAndDrop';
 
 	let showAddForm = false;
 	let newRoutineName = '';
@@ -43,7 +44,7 @@
 	}
 
 	// Update fade class when routines change
-	$: if ($routines) {
+	$: if (sortedRoutines) {
 		setTimeout(updateFadeClass, 0);
 	}
 
@@ -95,6 +96,13 @@
 		const displayHour = hour % 12 || 12;
 		return `${displayHour}:${minutes} ${ampm}`;
 	}
+
+	function handleReorder(fromIndex: number, toIndex: number) {
+		routines.reorder(fromIndex, toIndex);
+	}
+
+	// Sort routines by order for display
+	$: sortedRoutines = [...$routines].sort((a, b) => a.order - b.order);
 </script>
 
 <div class="flex flex-col" style="max-height: calc(100vh - 136px);">
@@ -119,8 +127,11 @@
 		class="scrollable-list-container {fadeClass} flex-1 overflow-y-auto px-4 pb-8"
 	>
 		<div class="space-y-2">
-			{#each $routines as routine (routine.id)}
-				<div class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm">
+			{#each sortedRoutines as routine, index (routine.id)}
+				<div 
+					class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm"
+					use:dragAndDrop={{ onReorder: handleReorder, index }}
+				>
 					<div class="flex items-center justify-between">
 						<div class="flex flex-1 items-center gap-3">
 							<button

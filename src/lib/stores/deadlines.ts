@@ -11,6 +11,7 @@ export interface Deadline {
 	createdAt: string;
 	completedAt?: string;
 	tags?: string[];
+	order: number;
 }
 
 // Helper function to calculate if a deadline is overdue
@@ -51,8 +52,13 @@ function createDeadlinesStore() {
 				const stored = localStorage.getItem('flowstate-deadlines');
 				if (stored) {
 					const deadlines = JSON.parse(stored);
+					// Handle legacy data without order field
+					const deadlinesWithOrder = deadlines.map((deadline: any, index: number) => ({
+						...deadline,
+						order: deadline.order !== undefined ? deadline.order : index
+					}));
 					// Update statuses when loading
-					const updatedDeadlines = updateDeadlineStatuses(deadlines);
+					const updatedDeadlines = updateDeadlineStatuses(deadlinesWithOrder);
 					set(updatedDeadlines);
 				}
 			}
@@ -65,18 +71,20 @@ function createDeadlinesStore() {
 			set(deadlines);
 		},
 
-		add: (deadline: Omit<Deadline, 'id' | 'createdAt' | 'status'>) => {
-			const newDeadline: Deadline = {
-				...deadline,
-				id: crypto.randomUUID(),
-				status: 'pending',
-				createdAt: new Date().toISOString()
-			};
-
-			// Calculate initial status
-			newDeadline.status = calculateStatus(newDeadline);
-
+		add: (deadline: Omit<Deadline, 'id' | 'createdAt' | 'status' | 'order'>) => {
 			update((deadlines) => {
+				const maxOrder = deadlines.length > 0 ? Math.max(...deadlines.map(d => d.order)) : -1;
+				const newDeadline: Deadline = {
+					...deadline,
+					id: crypto.randomUUID(),
+					status: 'pending',
+					createdAt: new Date().toISOString(),
+					order: maxOrder + 1
+				};
+
+				// Calculate initial status
+				newDeadline.status = calculateStatus(newDeadline);
+
 				const updated = [...deadlines, newDeadline];
 				if (browser) {
 					localStorage.setItem('flowstate-deadlines', JSON.stringify(updated));
@@ -152,6 +160,25 @@ function createDeadlinesStore() {
 		refreshStatuses: () => {
 			update((deadlines) => {
 				const updated = updateDeadlineStatuses(deadlines);
+				if (browser) {
+					localStorage.setItem('flowstate-deadlines', JSON.stringify(updated));
+				}
+				return updated;
+			});
+		},
+
+		reorder: (fromIndex: number, toIndex: number) => {
+			update((deadlines) => {
+				const sortedDeadlines = [...deadlines].sort((a, b) => a.order - b.order);
+				const item = sortedDeadlines.splice(fromIndex, 1)[0];
+				sortedDeadlines.splice(toIndex, 0, item);
+				
+				// Update order values
+				const updated = sortedDeadlines.map((deadline, index) => ({
+					...deadline,
+					order: index
+				}));
+				
 				if (browser) {
 					localStorage.setItem('flowstate-deadlines', JSON.stringify(updated));
 				}
