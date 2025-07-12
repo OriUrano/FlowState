@@ -9,7 +9,7 @@
 	let newRoutineName = '';
 	let newRoutineTime = '';
 	let newRoutineFrequency: 'daily' | 'weekly' | 'custom' = 'daily';
-	
+
 	let scrollContainer: HTMLElement;
 	let fadeClass = 'fade-none';
 
@@ -20,12 +20,12 @@
 
 	function updateFadeClass() {
 		if (!scrollContainer) return;
-		
+
 		const { scrollTop, scrollHeight, clientHeight } = scrollContainer;
 		const isAtTop = scrollTop <= 2; // Small threshold for touch scrolling
 		const isAtBottom = scrollTop + clientHeight >= scrollHeight - 2;
 		const canScroll = scrollHeight > clientHeight;
-		
+
 		if (!canScroll) {
 			fadeClass = 'fade-none';
 		} else if (isAtTop && isAtBottom) {
@@ -121,14 +121,14 @@
 	</div>
 
 	<!-- Scrollable list container -->
-	<div 
+	<div
 		bind:this={scrollContainer}
 		on:scroll={handleScroll}
 		class="scrollable-list-container {fadeClass} flex-1 overflow-y-auto px-4 pb-8"
 	>
 		<div class="space-y-2">
 			{#each sortedRoutines as routine, index (routine.id)}
-				<div 
+				<div
 					class="rounded-lg border border-gray-200 bg-white p-3 shadow-sm"
 					use:dragAndDrop={{ onReorder: handleReorder, index }}
 				>
@@ -216,7 +216,8 @@
 			class="relative z-[61] w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl"
 			on:click|stopPropagation
 			on:keydown|stopPropagation
-			role="document"
+			role="dialog"
+			tabindex="-1"
 			in:fly={{ y: 300, duration: 300 }}
 			out:fly={{ y: 300, duration: 200 }}
 		>

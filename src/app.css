@@ -64,40 +64,37 @@ select:focus-visible {
 
 /* Fade only at top - when scrolled to bottom */
 .scrollable-list-container.fade-top {
-	-webkit-mask-image: linear-gradient(to bottom, 
-		transparent 0px, 
-		black 30px, 
-		black 100%);
-	mask-image: linear-gradient(to bottom, 
-		transparent 0px, 
-		black 30px, 
-		black 100%);
+	-webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 30px, black 100%);
+	mask-image: linear-gradient(to bottom, transparent 0px, black 30px, black 100%);
 }
 
 /* Fade only at bottom - when scrolled to top */
 .scrollable-list-container.fade-bottom {
-	-webkit-mask-image: linear-gradient(to bottom, 
-		black 0%, 
-		black calc(100% - 30px), 
-		transparent 100%);
-	mask-image: linear-gradient(to bottom, 
-		black 0%, 
-		black calc(100% - 30px), 
-		transparent 100%);
+	-webkit-mask-image: linear-gradient(
+		to bottom,
+		black 0%,
+		black calc(100% - 30px),
+		transparent 100%
+	);
+	mask-image: linear-gradient(to bottom, black 0%, black calc(100% - 30px), transparent 100%);
 }
 
 /* Fade at both ends - when scrolled in middle */
 .scrollable-list-container.fade-both {
-	-webkit-mask-image: linear-gradient(to bottom, 
-		transparent 0px, 
-		black 30px, 
-		black calc(100% - 30px), 
-		transparent 100%);
-	mask-image: linear-gradient(to bottom, 
-		transparent 0px, 
-		black 30px, 
-		black calc(100% - 30px), 
-		transparent 100%);
+	-webkit-mask-image: linear-gradient(
+		to bottom,
+		transparent 0px,
+		black 30px,
+		black calc(100% - 30px),
+		transparent 100%
+	);
+	mask-image: linear-gradient(
+		to bottom,
+		transparent 0px,
+		black 30px,
+		black calc(100% - 30px),
+		transparent 100%
+	);
 }
 
 /* Reduce fade effects for users who prefer reduced motion */
@@ -106,39 +103,36 @@ select:focus-visible {
 		transition: none;
 		-webkit-transition: none;
 	}
-	
+
 	.scrollable-list-container.fade-top {
-		-webkit-mask-image: linear-gradient(to bottom, 
-			transparent 0px, 
-			black 15px, 
-			black 100%);
-		mask-image: linear-gradient(to bottom, 
-			transparent 0px, 
-			black 15px, 
-			black 100%);
+		-webkit-mask-image: linear-gradient(to bottom, transparent 0px, black 15px, black 100%);
+		mask-image: linear-gradient(to bottom, transparent 0px, black 15px, black 100%);
 	}
-	
+
 	.scrollable-list-container.fade-bottom {
-		-webkit-mask-image: linear-gradient(to bottom, 
-			black 0%, 
-			black calc(100% - 15px), 
-			transparent 100%);
-		mask-image: linear-gradient(to bottom, 
-			black 0%, 
-			black calc(100% - 15px), 
-			transparent 100%);
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			black 0%,
+			black calc(100% - 15px),
+			transparent 100%
+		);
+		mask-image: linear-gradient(to bottom, black 0%, black calc(100% - 15px), transparent 100%);
 	}
-	
+
 	.scrollable-list-container.fade-both {
-		-webkit-mask-image: linear-gradient(to bottom, 
-			transparent 0px, 
-			black 15px, 
-			black calc(100% - 15px), 
-			transparent 100%);
-		mask-image: linear-gradient(to bottom, 
-			transparent 0px, 
-			black 15px, 
-			black calc(100% - 15px), 
-			transparent 100%);
+		-webkit-mask-image: linear-gradient(
+			to bottom,
+			transparent 0px,
+			black 15px,
+			black calc(100% - 15px),
+			transparent 100%
+		);
+		mask-image: linear-gradient(
+			to bottom,
+			transparent 0px,
+			black 15px,
+			black calc(100% - 15px),
+			transparent 100%
+		);
 	}
 }

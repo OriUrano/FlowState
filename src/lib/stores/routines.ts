@@ -42,7 +42,7 @@ function createRoutinesStore() {
 
 		add: (routine: Omit<Routine, 'id' | 'createdAt' | 'completed' | 'order'>) => {
 			update((routines) => {
-				const maxOrder = routines.length > 0 ? Math.max(...routines.map(r => r.order)) : -1;
+				const maxOrder = routines.length > 0 ? Math.max(...routines.map((r) => r.order)) : -1;
 				const newRoutine: Routine = {
 					...routine,
 					id: crypto.randomUUID(),
@@ -112,13 +112,13 @@ function createRoutinesStore() {
 				const sortedRoutines = [...routines].sort((a, b) => a.order - b.order);
 				const item = sortedRoutines.splice(fromIndex, 1)[0];
 				sortedRoutines.splice(toIndex, 0, item);
-				
+
 				// Update order values
 				const updated = sortedRoutines.map((routine, index) => ({
 					...routine,
 					order: index
 				}));
-				
+
 				if (browser) {
 					localStorage.setItem('flowstate-routines', JSON.stringify(updated));
 				}

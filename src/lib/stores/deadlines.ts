@@ -73,7 +73,7 @@ function createDeadlinesStore() {
 
 		add: (deadline: Omit<Deadline, 'id' | 'createdAt' | 'status' | 'order'>) => {
 			update((deadlines) => {
-				const maxOrder = deadlines.length > 0 ? Math.max(...deadlines.map(d => d.order)) : -1;
+				const maxOrder = deadlines.length > 0 ? Math.max(...deadlines.map((d) => d.order)) : -1;
 				const newDeadline: Deadline = {
 					...deadline,
 					id: crypto.randomUUID(),
@@ -172,13 +172,13 @@ function createDeadlinesStore() {
 				const sortedDeadlines = [...deadlines].sort((a, b) => a.order - b.order);
 				const item = sortedDeadlines.splice(fromIndex, 1)[0];
 				sortedDeadlines.splice(toIndex, 0, item);
-				
+
 				// Update order values
 				const updated = sortedDeadlines.map((deadline, index) => ({
 					...deadline,
 					order: index
 				}));
-				
+
 				if (browser) {
 					localStorage.setItem('flowstate-deadlines', JSON.stringify(updated));
 				}
