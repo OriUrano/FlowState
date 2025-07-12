@@ -15,6 +15,10 @@ FlowState is a mobile-first Progressive Web App (PWA) designed for people with A
 - `npm run format` - Format code with Prettier
 - `npm run lint` - Check code formatting with Prettier
 
+## Pre-Commit Workflow
+
+- Before commiting and pushing run `npm run check` and `prettier --check .` and fix any warnings
+
 ## Architecture Overview
 
 ### PWA Configuration

@@ -51,9 +51,12 @@
 		document.addEventListener('visibilitychange', handleVisibilityChange);
 
 		// Check for routine resets every hour
-		const resetInterval = setInterval(() => {
-			routines.checkAndReset();
-		}, 60 * 60 * 1000); // 1 hour
+		const resetInterval = setInterval(
+			() => {
+				routines.checkAndReset();
+			},
+			60 * 60 * 1000
+		); // 1 hour
 
 		return () => {
 			window.removeEventListener('resize', handleResize);
