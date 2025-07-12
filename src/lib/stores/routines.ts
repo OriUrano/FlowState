@@ -15,6 +15,50 @@ export interface Routine {
 function createRoutinesStore() {
 	const { subscribe, set, update } = writable<Routine[]>([]);
 
+	// Helper function to check if a date is from a previous day
+	const isFromPreviousDay = (dateString: string): boolean => {
+		const completedDate = new Date(dateString);
+		const today = new Date();
+		
+		// Reset time to midnight for accurate day comparison
+		completedDate.setHours(0, 0, 0, 0);
+		today.setHours(0, 0, 0, 0);
+		
+		return completedDate < today;
+	};
+
+	// Helper function to check if a date is from a previous week (before current Monday)
+	const isFromPreviousWeek = (dateString: string): boolean => {
+		const completedDate = new Date(dateString);
+		const today = new Date();
+		
+		// Get start of current week (Monday)
+		const currentMonday = new Date(today);
+		const dayOfWeek = today.getDay();
+		const daysToMonday = dayOfWeek === 0 ? 6 : dayOfWeek - 1; // Sunday is 0, Monday is 1
+		currentMonday.setDate(today.getDate() - daysToMonday);
+		currentMonday.setHours(0, 0, 0, 0);
+		
+		// Reset completed date to start of day
+		completedDate.setHours(0, 0, 0, 0);
+		
+		return completedDate < currentMonday;
+	};
+
+	const resetRoutines = (routines: Routine[]): Routine[] => {
+		return routines.map(routine => {
+			if (routine.completed && routine.lastCompleted) {
+				if (routine.frequency === 'daily' && isFromPreviousDay(routine.lastCompleted)) {
+					return { ...routine, completed: false };
+				}
+				if (routine.frequency === 'weekly' && isFromPreviousWeek(routine.lastCompleted)) {
+					return { ...routine, completed: false };
+				}
+			}
+			return routine;
+		});
+	};
+
 	return {
 		subscribe,
 
@@ -24,10 +68,17 @@ function createRoutinesStore() {
 				if (stored) {
 					const routines = JSON.parse(stored);
 					// Handle legacy data without order field
-					const routinesWithOrder = routines.map((routine: any, index: number) => ({
+					let routinesWithOrder = routines.map((routine: any, index: number) => ({
 						...routine,
 						order: routine.order !== undefined ? routine.order : index
 					}));
+					
+					// Reset routines that were completed on previous days/weeks
+					routinesWithOrder = resetRoutines(routinesWithOrder);
+					
+					// Save the reset state back to localStorage
+					localStorage.setItem('flowstate-routines', JSON.stringify(routinesWithOrder));
+					
 					set(routinesWithOrder);
 				}
 			}
@@ -123,6 +174,21 @@ function createRoutinesStore() {
 					localStorage.setItem('flowstate-routines', JSON.stringify(updated));
 				}
 				return updated;
+			});
+		},
+
+		checkAndReset: () => {
+			update((routines) => {
+				const resetRoutinesResult = resetRoutines(routines);
+				const hasChanges = resetRoutinesResult.some((routine, index) => 
+					routine.completed !== routines[index].completed
+				);
+				
+				if (hasChanges && browser) {
+					localStorage.setItem('flowstate-routines', JSON.stringify(resetRoutinesResult));
+				}
+				
+				return resetRoutinesResult;
 			});
 		}
 	};

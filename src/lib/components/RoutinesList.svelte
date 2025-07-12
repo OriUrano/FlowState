@@ -42,8 +42,23 @@
 		const handleResize = () => calculateScrollHeight();
 		window.addEventListener('resize', handleResize);
 
+		// Check for routine resets when the page becomes visible
+		const handleVisibilityChange = () => {
+			if (!document.hidden) {
+				routines.checkAndReset();
+			}
+		};
+		document.addEventListener('visibilitychange', handleVisibilityChange);
+
+		// Check for routine resets every hour
+		const resetInterval = setInterval(() => {
+			routines.checkAndReset();
+		}, 60 * 60 * 1000); // 1 hour
+
 		return () => {
 			window.removeEventListener('resize', handleResize);
+			document.removeEventListener('visibilitychange', handleVisibilityChange);
+			clearInterval(resetInterval);
 		};
 	});
 
