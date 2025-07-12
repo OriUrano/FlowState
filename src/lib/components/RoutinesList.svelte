@@ -11,11 +11,39 @@
 	let newRoutineFrequency: 'daily' | 'weekly' | 'custom' = 'daily';
 
 	let scrollContainer: HTMLElement;
+	let componentHeader: HTMLElement;
 	let fadeClass = 'fade-none';
+	let scrollContainerHeight = 'calc(100vh - 17rem)'; // fallback
+
+	function calculateScrollHeight() {
+		if (typeof window === 'undefined') return;
+		
+		const viewportHeight = window.innerHeight;
+		const bottomNav = document.querySelector('nav') as HTMLElement;
+		const flowStateHeader = document.querySelector('header') as HTMLElement;
+		
+		const bottomNavHeight = bottomNav?.offsetHeight || 80;
+		const flowStateHeaderHeight = flowStateHeader?.offsetHeight || 60;
+		const componentHeaderHeight = componentHeader?.offsetHeight || 96;
+		
+		const availableHeight = viewportHeight - bottomNavHeight - flowStateHeaderHeight - componentHeaderHeight - 3;
+		scrollContainerHeight = `${Math.max(availableHeight, 200)}px`;
+	}
 
 	onMount(() => {
 		routines.load();
 		updateFadeClass();
+		
+		// Calculate initial height
+		setTimeout(calculateScrollHeight, 0);
+		
+		// Recalculate on window resize
+		const handleResize = () => calculateScrollHeight();
+		window.addEventListener('resize', handleResize);
+		
+		return () => {
+			window.removeEventListener('resize', handleResize);
+		};
 	});
 
 	function updateFadeClass() {
@@ -43,8 +71,8 @@
 		updateFadeClass();
 	}
 
-	// Update fade class when routines change
-	$: if (sortedRoutines) {
+	// Update fade class when routines change or height changes
+	$: if (sortedRoutines || scrollContainerHeight) {
 		setTimeout(updateFadeClass, 0);
 	}
 
@@ -107,7 +135,7 @@
 
 <div class="flex h-full flex-col">
 	<!-- Fixed header -->
-	<div class="sticky top-0 z-10 flex-shrink-0 bg-gray-50 px-4 py-6">
+	<div bind:this={componentHeader} class="sticky top-0 z-10 flex-shrink-0 bg-gray-50 px-4 py-6">
 		<div class="flex items-center justify-between">
 			<h2 class="text-2xl font-bold text-gray-900">Today's Routines</h2>
 			<button
@@ -125,7 +153,7 @@
 		bind:this={scrollContainer}
 		on:scroll={handleScroll}
 		class="scrollable-list-container {fadeClass} overflow-y-auto px-4 pb-8"
-		style="height: calc(100vh - 17rem);"
+		style="height: {scrollContainerHeight};"
 	>
 		<div class="space-y-2">
 			{#each sortedRoutines as routine, index (routine.id)}
