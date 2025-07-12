@@ -10,6 +10,13 @@
 	let newRoutineTime = '';
 	let newRoutineFrequency: 'daily' | 'weekly' | 'custom' = 'daily';
 
+	// Edit form state
+	let showEditForm = false;
+	let editingRoutine: Routine | null = null;
+	let editName = '';
+	let editTime = '';
+	let editFrequency: 'daily' | 'weekly' | 'custom' = 'daily';
+
 	let scrollContainer: HTMLElement;
 	let componentHeader: HTMLElement;
 	let fadeClass = 'fade-none';
@@ -123,16 +130,44 @@
 	}
 
 	function editRoutine(routine: Routine) {
-		// TODO: Implement edit functionality
-		console.log('Edit routine:', routine);
+		editingRoutine = routine;
+		editName = routine.name;
+		editTime = routine.time || '';
+		editFrequency = routine.frequency;
+		showEditForm = true;
+	}
+
+	function updateRoutine() {
+		if (editName.trim() && editingRoutine) {
+			routines.update(editingRoutine.id, {
+				name: editName.trim(),
+				time: editTime || undefined,
+				frequency: editFrequency
+			});
+
+			// Clear edit form
+			editName = '';
+			editTime = '';
+			editFrequency = 'daily';
+			editingRoutine = null;
+			showEditForm = false;
+		}
 	}
 
 	function closeModal() {
 		showAddForm = false;
-		// Clear form fields when closing
+		showEditForm = false;
+
+		// Clear add form fields
 		newRoutineName = '';
 		newRoutineTime = '';
 		newRoutineFrequency = 'daily';
+
+		// Clear edit form fields
+		editName = '';
+		editTime = '';
+		editFrequency = 'daily';
+		editingRoutine = null;
 	}
 
 	function formatTime(time?: string) {
@@ -322,6 +357,90 @@
 				</button>
 				<button
 					on:click={() => (showAddForm = false)}
+					class="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
+				>
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- Edit Modal Overlay -->
+{#if showEditForm}
+	<div
+		class="fixed inset-0 z-[60] flex items-end justify-center bg-black/60"
+		on:click={closeModal}
+		on:keydown={(e) => e.key === 'Escape' && closeModal()}
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="edit-modal-title"
+		tabindex="-1"
+		in:fade={{ duration: 200 }}
+		out:fade={{ duration: 200 }}
+	>
+		<div
+			class="relative z-[61] w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl"
+			on:click|stopPropagation
+			on:keydown|stopPropagation
+			role="dialog"
+			tabindex="-1"
+			in:fly={{ y: 300, duration: 300 }}
+			out:fly={{ y: 300, duration: 200 }}
+		>
+			<h3 id="edit-modal-title" class="mb-4 text-lg font-semibold text-gray-900">Edit Routine</h3>
+
+			<div class="space-y-4">
+				<div>
+					<label for="edit-routine-name" class="mb-1 block text-sm font-medium text-gray-700">
+						Routine Name
+					</label>
+					<input
+						id="edit-routine-name"
+						type="text"
+						bind:value={editName}
+						placeholder="e.g., Morning meditation"
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+				</div>
+
+				<div>
+					<label for="edit-routine-time" class="mb-1 block text-sm font-medium text-gray-700">
+						Time (optional)
+					</label>
+					<input
+						id="edit-routine-time"
+						type="time"
+						bind:value={editTime}
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+				</div>
+
+				<div>
+					<label for="edit-routine-frequency" class="mb-1 block text-sm font-medium text-gray-700">
+						Frequency
+					</label>
+					<select
+						id="edit-routine-frequency"
+						bind:value={editFrequency}
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					>
+						<option value="daily">Daily</option>
+						<option value="weekly">Weekly</option>
+						<option value="custom">Custom</option>
+					</select>
+				</div>
+			</div>
+
+			<div class="mt-6 flex gap-3">
+				<button
+					on:click={updateRoutine}
+					class="flex-1 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+				>
+					Save Changes
+				</button>
+				<button
+					on:click={closeModal}
 					class="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
 				>
 					Cancel

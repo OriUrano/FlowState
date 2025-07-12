@@ -13,6 +13,16 @@
 	let newDeadlineTags = '';
 	let errors: { title?: string; dueDate?: string } = {};
 
+	// Edit form state
+	let showEditForm = false;
+	let editingDeadline: Deadline | null = null;
+	let editTitle = '';
+	let editDescription = '';
+	let editDueDate = '';
+	let editPriority: 'high' | 'medium' | 'low' = 'medium';
+	let editTags = '';
+	let editErrors: { title?: string; dueDate?: string } = {};
+
 	let scrollContainer: HTMLElement;
 	let componentHeader: HTMLElement;
 	let fadeClass = 'fade-none';
@@ -144,19 +154,86 @@
 	}
 
 	function editDeadline(deadline: Deadline) {
-		// TODO: Implement edit functionality
-		console.log('Edit deadline:', deadline);
+		editingDeadline = deadline;
+		editTitle = deadline.title;
+		editDescription = deadline.description || '';
+		editDueDate = deadline.dueDate;
+		editPriority = deadline.priority;
+		editTags = deadline.tags ? deadline.tags.join(', ') : '';
+		editErrors = {};
+		showEditForm = true;
+	}
+
+	function validateEditForm(): boolean {
+		editErrors = {};
+
+		if (!editTitle.trim()) {
+			editErrors.title = 'Title is required';
+		}
+
+		if (!editDueDate) {
+			editErrors.dueDate = 'Due date is required';
+		} else {
+			const today = new Date();
+			const todayStr = today.toISOString().split('T')[0];
+
+			if (editDueDate < todayStr && editingDeadline && editingDeadline.status !== 'completed') {
+				editErrors.dueDate = 'Due date cannot be in the past';
+			}
+		}
+
+		return Object.keys(editErrors).length === 0;
+	}
+
+	function updateDeadline() {
+		if (!validateEditForm() || !editingDeadline) {
+			return;
+		}
+
+		const tags = editTags
+			.split(',')
+			.map((tag) => tag.trim())
+			.filter((tag) => tag.length > 0);
+
+		deadlines.update(editingDeadline.id, {
+			title: editTitle.trim(),
+			description: editDescription.trim() || undefined,
+			dueDate: editDueDate,
+			priority: editPriority,
+			tags: tags.length > 0 ? tags : undefined
+		});
+
+		// Clear edit form
+		editTitle = '';
+		editDescription = '';
+		editDueDate = '';
+		editPriority = 'medium';
+		editTags = '';
+		editErrors = {};
+		editingDeadline = null;
+		showEditForm = false;
 	}
 
 	function closeModal() {
 		showAddForm = false;
-		// Clear form fields and errors when closing
+		showEditForm = false;
+
+		// Clear add form fields and errors
 		newDeadlineTitle = '';
 		newDeadlineDescription = '';
 		newDeadlineDueDate = '';
 		newDeadlinePriority = 'medium';
 		newDeadlineTags = '';
 		errors = {};
+
+		// Clear edit form fields and errors
+		editTitle = '';
+		editDescription = '';
+		editDueDate = '';
+		editPriority = 'medium';
+		editTags = '';
+		editErrors = {};
+		editingDeadline = null;
 	}
 
 	function formatDueDate(dueDate: string): string {
@@ -458,6 +535,129 @@
 					class="flex-1 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
 				>
 					Add Deadline
+				</button>
+				<button
+					on:click={closeModal}
+					class="flex-1 rounded-md bg-gray-200 px-4 py-2 text-gray-800 transition-colors hover:bg-gray-300"
+				>
+					Cancel
+				</button>
+			</div>
+		</div>
+	</div>
+{/if}
+
+<!-- Edit Modal Overlay -->
+{#if showEditForm}
+	<div
+		class="fixed inset-0 z-[60] flex items-end justify-center bg-black/60"
+		on:click={closeModal}
+		on:keydown={(e) => e.key === 'Escape' && closeModal()}
+		role="dialog"
+		aria-modal="true"
+		aria-labelledby="edit-modal-title"
+		tabindex="-1"
+		in:fade={{ duration: 200 }}
+		out:fade={{ duration: 200 }}
+	>
+		<div
+			class="relative z-[61] w-full max-w-md rounded-t-xl bg-white p-6 shadow-xl"
+			on:click|stopPropagation
+			on:keydown|stopPropagation
+			role="dialog"
+			tabindex="-1"
+			in:fly={{ y: 300, duration: 300 }}
+			out:fly={{ y: 300, duration: 200 }}
+		>
+			<h3 id="edit-modal-title" class="mb-4 text-lg font-semibold text-gray-900">Edit Deadline</h3>
+
+			<div class="space-y-4">
+				<div>
+					<label for="edit-deadline-title" class="mb-1 block text-sm font-medium text-gray-700">
+						Title
+					</label>
+					<input
+						id="edit-deadline-title"
+						type="text"
+						bind:value={editTitle}
+						placeholder="e.g., Submit tax returns"
+						class="w-full rounded-md border {editErrors.title
+							? 'border-red-500'
+							: 'border-gray-300'} px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+					{#if editErrors.title}
+						<p class="mt-1 text-sm text-red-600">{editErrors.title}</p>
+					{/if}
+				</div>
+
+				<div>
+					<label
+						for="edit-deadline-description"
+						class="mb-1 block text-sm font-medium text-gray-700"
+					>
+						Description (optional)
+					</label>
+					<textarea
+						id="edit-deadline-description"
+						bind:value={editDescription}
+						placeholder="Additional details..."
+						rows="2"
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					></textarea>
+				</div>
+
+				<div>
+					<label for="edit-deadline-due-date" class="mb-1 block text-sm font-medium text-gray-700">
+						Due Date
+					</label>
+					<input
+						id="edit-deadline-due-date"
+						type="date"
+						bind:value={editDueDate}
+						class="w-full rounded-md border {editErrors.dueDate
+							? 'border-red-500'
+							: 'border-gray-300'} px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+					{#if editErrors.dueDate}
+						<p class="mt-1 text-sm text-red-600">{editErrors.dueDate}</p>
+					{/if}
+				</div>
+
+				<div>
+					<label for="edit-deadline-priority" class="mb-1 block text-sm font-medium text-gray-700">
+						Priority
+					</label>
+					<select
+						id="edit-deadline-priority"
+						bind:value={editPriority}
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					>
+						<option value="low">Low Priority</option>
+						<option value="medium">Medium Priority</option>
+						<option value="high">High Priority</option>
+					</select>
+				</div>
+
+				<div>
+					<label for="edit-deadline-tags" class="mb-1 block text-sm font-medium text-gray-700">
+						Tags (optional)
+					</label>
+					<input
+						id="edit-deadline-tags"
+						type="text"
+						bind:value={editTags}
+						placeholder="work, taxes, personal (comma separated)"
+						class="w-full rounded-md border border-gray-300 px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:outline-none"
+					/>
+				</div>
+			</div>
+
+			<div class="mt-6 flex gap-3">
+				<button
+					on:click={updateDeadline}
+					class="flex-1 rounded-md bg-blue-600 px-4 py-2 text-white transition-colors hover:bg-blue-700"
+				>
+					Save Changes
 				</button>
 				<button
 					on:click={closeModal}
