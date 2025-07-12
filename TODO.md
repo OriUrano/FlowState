@@ -20,6 +20,7 @@
 - [x] Add Deadlines route/page
 - [x] Integrate Deadlines with bottom navigation
 - [x] Add smooth slide animations for tab switching
+- [x] **NEW: Implement edit modal functionality for deadlines**
 - [ ] Add deadline notifications/reminders
 
 ### 👤 Profile/Settings Module
@@ -62,7 +63,8 @@
 - [ ] Add dark mode support
 - [ ] Create theme customization options
 - [ ] Add accessibility improvements (screen reader support)
-- [ ] Implement drag-and-drop for routine reordering
+- [x] ~~Implement drag-and-drop for routine reordering~~ ✅ **COMPLETED**
+- [x] ~~Implement drag-and-drop for deadline reordering~~ ✅ **COMPLETED**
 - [ ] Add haptic feedback for mobile interactions
 
 ## Low Priority - Nice to Have
@@ -119,6 +121,8 @@
 - [x] Smooth slide animations for tab transitions
 - [x] Priority indicators and urgency visualization for deadlines
 - [x] Form validation and error handling
+- [x] **NEW: Edit modal functionality for both routines and deadlines**
+- [x] **NEW: Drag-and-drop reordering for routines and deadlines**
 
 ### 🚧 In Progress
 
@@ -134,6 +138,29 @@
 - [ ] Add input validation
 - [ ] Implement proper state management patterns
 
+## Recent Updates (Latest Session)
+
+### 🎉 Just Completed: Edit Modal Functionality
+
+- **Date**: 2025-07-12
+- **Features Added**:
+  - Full edit modal implementation for both routines and deadlines
+  - Form pre-population with existing data
+  - Consistent UX pattern matching add modals
+  - Proper validation and error handling for edit forms
+  - Clean state management and form clearing
+  - Bottom-sheet modal design with slide animations
+  - Accessibility features (ARIA labels, keyboard navigation)
+  - Mobile-first responsive design
+
+### 🔧 Technical Implementation Details
+
+- **Routines**: Added edit state variables, `updateRoutine()` function, edit modal UI
+- **Deadlines**: Added edit state variables, `updateDeadline()` function with validation, edit modal UI
+- **Code Quality**: All changes passed TypeScript checks and Prettier formatting
+- **Store Integration**: Leveraged existing `update()` methods in both stores
+- **UX Consistency**: Maintained same modal patterns, transitions, and styling
+
 ## Notes
 
 - Focus on mobile-first development
@@ -141,3 +168,4 @@
 - Ensure offline functionality for all features
 - Keep cognitive load minimal with simple, intuitive interfaces
 - Test on actual mobile devices regularly
+- **NEW**: Edit functionality now fully operational for both core modules

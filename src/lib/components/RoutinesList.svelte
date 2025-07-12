@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { dragAndDrop } from './dragAndDrop';
+	import ConfirmationDialog from './ConfirmationDialog.svelte';
 
 	let showAddForm = false;
 	let newRoutineName = '';
@@ -16,6 +17,10 @@
 	let editName = '';
 	let editTime = '';
 	let editFrequency: 'daily' | 'weekly' | 'custom' = 'daily';
+
+	// Delete confirmation state
+	let showDeleteConfirmation = false;
+	let routineToDelete: Routine | null = null;
 
 	let scrollContainer: HTMLElement;
 	let componentHeader: HTMLElement;
@@ -125,8 +130,20 @@
 		}
 	}
 
-	function deleteRoutine(id: string) {
-		routines.delete(id);
+	function requestDeleteConfirmation(routine: Routine) {
+		routineToDelete = routine;
+		showDeleteConfirmation = true;
+	}
+
+	function confirmDeleteRoutine() {
+		if (routineToDelete) {
+			routines.delete(routineToDelete.id);
+			routineToDelete = null;
+		}
+	}
+
+	function cancelDeleteRoutine() {
+		routineToDelete = null;
 	}
 
 	function editRoutine(routine: Routine) {
@@ -257,7 +274,7 @@
 								<Edit size={16} />
 							</button>
 							<button
-								on:click={() => deleteRoutine(routine.id)}
+								on:click={() => requestDeleteConfirmation(routine)}
 								class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
 							>
 								<Trash2 size={16} />
@@ -449,3 +466,17 @@
 		</div>
 	</div>
 {/if}
+
+<!-- Delete Confirmation Dialog -->
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirmation}
+	title="Delete Routine"
+	message={routineToDelete
+		? `Are you sure you want to delete "${routineToDelete.name}"? This action cannot be undone.`
+		: ''}
+	confirmText="Delete"
+	cancelText="Cancel"
+	variant="danger"
+	onConfirm={confirmDeleteRoutine}
+	onCancel={cancelDeleteRoutine}
+/>

@@ -4,6 +4,7 @@
 	import { onMount } from 'svelte';
 	import { fly, fade } from 'svelte/transition';
 	import { dragAndDrop } from './dragAndDrop';
+	import ConfirmationDialog from './ConfirmationDialog.svelte';
 
 	let showAddForm = false;
 	let newDeadlineTitle = '';
@@ -22,6 +23,10 @@
 	let editPriority: 'high' | 'medium' | 'low' = 'medium';
 	let editTags = '';
 	let editErrors: { title?: string; dueDate?: string } = {};
+
+	// Delete confirmation state
+	let showDeleteConfirmation = false;
+	let deadlineToDelete: Deadline | null = null;
 
 	let scrollContainer: HTMLElement;
 	let componentHeader: HTMLElement;
@@ -149,8 +154,20 @@
 		}
 	}
 
-	function deleteDeadline(id: string) {
-		deadlines.delete(id);
+	function requestDeleteConfirmation(deadline: Deadline) {
+		deadlineToDelete = deadline;
+		showDeleteConfirmation = true;
+	}
+
+	function confirmDeleteDeadline() {
+		if (deadlineToDelete) {
+			deadlines.delete(deadlineToDelete.id);
+			deadlineToDelete = null;
+		}
+	}
+
+	function cancelDeleteDeadline() {
+		deadlineToDelete = null;
 	}
 
 	function editDeadline(deadline: Deadline) {
@@ -402,7 +419,7 @@
 								<Edit size={16} />
 							</button>
 							<button
-								on:click={() => deleteDeadline(deadline.id)}
+								on:click={() => requestDeleteConfirmation(deadline)}
 								class="flex-shrink-0 p-1 text-gray-400 transition-colors hover:text-red-500"
 							>
 								<Trash2 size={16} />
@@ -669,3 +686,17 @@
 		</div>
 	</div>
 {/if}
+
+<!-- Delete Confirmation Dialog -->
+<ConfirmationDialog
+	bind:isOpen={showDeleteConfirmation}
+	title="Delete Deadline"
+	message={deadlineToDelete
+		? `Are you sure you want to delete "${deadlineToDelete.title}"? This action cannot be undone.`
+		: ''}
+	confirmText="Delete"
+	cancelText="Cancel"
+	variant="danger"
+	onConfirm={confirmDeleteDeadline}
+	onCancel={cancelDeleteDeadline}
+/>

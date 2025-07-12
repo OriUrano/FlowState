@@ -8,7 +8,7 @@ FlowState is a mobile-first Progressive Web App (PWA) designed for people with A
 
 ## Development Commands
 
-- `npm run dev` - Start development server (should already be running - notify user if not)
+- `npm run dev` - Start development server (DO NOT run this - user manages dev server)
 - `npm run build` - Build for production (static site)
 - `npm run preview` - Preview production build locally
 - `npm run check` - Run TypeScript and Svelte checks
