@@ -12,7 +12,7 @@
 		</div>
 	</header>
 
-	<main class="flex-1" style="padding-bottom: 5rem;">
+	<main class="flex-1 overflow-hidden" style="padding-bottom: 5rem;">
 		{@render children()}
 	</main>
 </div>
